@@ -1,55 +1,53 @@
-# 🎯 Radar B2B - Inteligência de Mercado & Oceano Azul
 
-![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge)
-![Badge React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Badge Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
-![Badge BigQuery](https://img.shields.io/badge/Google_BigQuery-669DF6?style=for-the-badge&logo=googlebigquery&logoColor=white)
+# 🎯 Radar B2B - Inteligência de Mercado
 
-> **Uma ferramenta estratégica para identificar cidades brasileiras com alto potencial econômico e baixa concorrência para abertura de Agências de Dados e B.I.**
+Aplicativo móvel desenvolvido com **React Native (Expo)** para identificar oportunidades estratégicas ("Oceanos Azuis") para abertura de agências de Análise de Dados e B.I. no Brasil.
+
+O app cruza dados econômicos, populacionais e de concorrência para listar as melhores cidades e fornece uma lista de leads qualificados (Top 600 empresas por faturamento) para prospecção ativa.
 
 ---
 
-## 🖼️ Screenshots
+## 🚀 Funcionalidades Principais
 
-| Dashboard Principal | Menu de Filtros | Detalhes da Cidade |
-|:---:|:---:|:---:|
-| ![Dashboard](https://via.placeholder.com/200x400?text=Dashboard+App) | ![Filtros](https://via.placeholder.com/200x400?text=Filtros+Laterais) | ![Detalhes](https://via.placeholder.com/200x400?text=Analise+Cidade) |
-
-
----
-
-## 💡 Sobre o Projeto
-
-O **Radar B2B** não é apenas um catálogo de cidades. É uma aplicação de **Business Intelligence** que cruza dados massivos de fontes públicas para responder a uma pergunta de negócio crítica:
-
-> *"Onde eu devo abrir minha empresa de Análise de Dados para encontrar clientes ricos e fugir da concorrência?"*
-
-O app classifica mais de 5.000 cidades brasileiras utilizando algoritmos de pontuação que equilibram **Riqueza (PIB/Bancos)** com **Saturação de Mercado (Concorrência)**.
+-   **Mapa de Oportunidades:** Ranqueamento de cidades baseado em Score proprietário (PIB, Concorrência, Volume Bancário).
+-   **Leads Offline:** Banco de dados SQLite embarcado com +600 empresas por cidade.
+-   **Download Inteligente:** Arquitetura "Download on First Launch" para baixar o banco de dados (600MB+) via GitHub Releases na primeira execução, mantendo o APK leve (~30MB).
+-   **Filtros Avançados:** Filtragem por Nível de Concorrência (Oceano Azul, Alta, Média), População, Região e Nicho (Agro, Indústria, Serviços).
+-   **Ações Diretas:**
+    -   📞 Ligar diretamente para a empresa.
+    -   📧 Enviar E-mail (com validação de e-mails nulos/inválidos).
+    -   📍 Copiar endereço completo para GPS.
+-   **Busca Híbrida:** Algoritmo de busca que resolve problemas de acentuação (ex: encontra "Querência" buscando por "QUERENCIA").
 
 ---
 
-## 🚀 Funcionalidades
+## 🛠️ Tecnologias Utilizadas
 
--   **🔍 Busca Inteligente:** Pesquisa instantânea de qualquer cidade do Brasil.
--   **🌊 Indicador "Oceano Azul":** Identifica automaticamente cidades com alta demanda (empresas ativas) e ZERO concorrência registrada.
--   **📊 Score de Oportunidade:** Um ranking calculado matematicamente que prioriza cidades ricas e desassistidas.
--   **📍 Filtros Avançados:** Filtragem por Estado (UF), População, Nicho (Agro/Serviços/Indústria) e Nível de Concorrência.
--   **📈 KPI "Clientes por Agência":** Mostra a relação de oferta e demanda (Ex: 5.000 clientes potenciais para cada 1 agência).
--   **💎 Joias Raras:** Destaque para cidades menores, fora do radar, mas extremamente lucrativas.
+-   **Core:** React Native, Expo Go (SDK 50+).
+-   **Banco de Dados:** SQLite (`expo-sqlite` New Async API).
+-   **Gerenciamento de Arquivos:** `expo-file-system/legacy` (Download e Persistência).
+-   **Navegação:** React Navigation (Stack).
+-   **UI/UX:** `react-native-safe-area-context`, `expo-vector-icons`.
+-   **Utils:** `expo-clipboard`, `expo-asset`.
 
 ---
 
-## 🧠 A Metodologia (Data Science)
+## 🏗️ Arquitetura do Projeto
 
-O diferencial deste projeto é o tratamento de dados realizado antes do app. O pipeline de dados foi construído da seguinte forma:
+O projeto utiliza uma arquitetura otimizada para lidar com grandes volumes de dados sem exceder os limites das lojas de aplicativos:
 
-### 1. Extração & Big Data (SQL + BigQuery)
-Utilizamos o **Google BigQuery** e a biblioteca `basedosdados` para cruzar tabelas gigantescas:
-* **Dados Financeiros:** PIB (IBGE) e Volume Bancário (Banco Central).
-* **Empresas Ativas (Demanda):** Contagem de CNPJs ativos (exceto MEI) na cidade.
-* **Concorrência (Oferta):** Filtragem de CNPJs com CNAEs específicos de T.I. (62.0), Tratamento de Dados (63.1) e Consultoria (70.2).
+1.  **APK Leve:** O aplicativo é instalado sem o banco de dados principal.
+2.  **Bootstrap:** Ao abrir, o `database.js` verifica a existência do banco.
+3.  **Download:** Se não existir, baixa o arquivo `.db` (hospedado no GitHub Releases) direto para o diretório do sistema.
+4.  **Conexão Global:** O `SQLiteProvider` no `App.js` mantém a conexão aberta para alta performance nas consultas.
 
-### 2. Algoritmo de Pontuação (Python)
-No Python (Pandas), criamos o **Score de Oportunidade**:
-```python
-Score = (Rank_Riqueza * 0.5) + (Rank_Demanda * 0.5) * Fator_Concorrencia
+### Estrutura de Pastas
+
+```bash
+/
+├── assets/             # Imagens e ícones
+├── App.js              # Entrada, Provider SQLite e Lógica de Download
+├── database.js         # Script de gerenciamento do arquivo .db
+├── dados.js            # JSON leve com metadados das 5570 cidades
+├── HomeScreen.js       # Dashboard, Filtros e Lista de Cidades
+└── ListaClientes.js    # Lista de Leads (FlatList Otimizada) e Consultas SQL
