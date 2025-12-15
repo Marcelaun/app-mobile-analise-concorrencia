@@ -14,7 +14,7 @@
 | Dashboard Principal | Menu de Filtros | Detalhes da Cidade |
 |:---:|:---:|:---:|
 | ![Dashboard](https://via.placeholder.com/200x400?text=Dashboard+App) | ![Filtros](https://via.placeholder.com/200x400?text=Filtros+Laterais) | ![Detalhes](https://via.placeholder.com/200x400?text=Analise+Cidade) |
-*(Substitua esses links pelos prints reais do seu app)*
+
 
 ---
 
